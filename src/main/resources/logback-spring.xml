@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+
+<configuration scan="true" scanPeriod="60 seconds">
+
+<!--  <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />-->
+<!--  <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />-->
+<!--  <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />-->
+
+  <springProperty scope="context" name="LOG_LEVEL"
+    source="spring.logging.level.root" />
+
+  <springProperty name="SERVICE_NAME" source="spring.application.name"/>
+
+  <property name="LOG_ENCODER_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%X{traceId:-},%X{spanId:-}] [%+10thread] %c:%line : %msg%n" />
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${LOG_ENCODER_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+    <file>logs/${SERVICE_NAME}.log</file>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- rollover daily -->
+      <fileNamePattern>logs/${SERVICE_NAME}-%d{yyyy-MM-dd}</fileNamePattern>
+        <maxFileSize>30MB</maxFileSize>
+      <maxHistory>5</maxHistory>
+      <cleanHistoryOnStart>false</cleanHistoryOnStart>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${LOG_ENCODER_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="ASYNC_ROLLING" class="ch.qos.logback.classic.AsyncAppender" queueSize="512">
+    <appender-ref ref="ROLLING"/>
+  </appender>
+
+  <logger name="jdbc" level="OFF"/>
+  <logger name="jdbc.sqlonly" level="OFF"/>
+  <logger name="jdbc.sqltiming" level="OFF"/>
+  <logger name="jdbc.audit" level="OFF"/>
+  <logger name="jdbc.resultset" level="OFF"/>
+  <logger name="jdbc.resultsettable" level="OFF"/>
+  <logger name="jdbc.connection" level="OFF"/>
+  <logger name="log4jdbc.log4j2" level="ERROR"/>
+  <logger name="org.apache.http" level="ERROR"/>
+  <logger name="com.zaxxer.hikari.pool" level="ERROR"/>
+  <logger name="org.hibernate" level="ERROR"/>
+  <logger name="org.springframework.orm" level="ERROR"/>
+  <logger name="org.springframework.jdbc" level="ERROR"/>
+  <logger name="org.springframework.data" level="ERROR"/>
+  <logger name="io.lettuce.core" level="ERROR"/>
+
+  <root level="${LOG_LEVEL}">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="ASYNC_ROLLING"/>
+  </root>
+</configuration>

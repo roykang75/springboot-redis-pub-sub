@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: springboot-redis-pub-sub
+  threads:
+    virtual:
+      enabled: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 3000 #ms connection timeout
+
+# -------------------------------------------------------------------
+# logging
+# -------------------------------------------------------------------
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql: OFF # TRACE
